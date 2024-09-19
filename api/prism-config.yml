@@ -1,0 +1,4 @@
+mock:
+  dynamic: false
+  exampleIndicator: "@example"
+  factory: ./seed-data.ts

@@ -1,0 +1,23 @@
+{
+  "name": "stamcomm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "npx @stoplight/prism-cli mock api/openapi.yml"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@stoplight/prism-cli": "^5.9.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.5.4"
+  }
+}

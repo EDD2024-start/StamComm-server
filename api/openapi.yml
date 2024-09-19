@@ -1,0 +1,551 @@
+openapi: 3.0.0
+info:
+  title: StamComm API
+  version: 1.0.0
+  description: API for StamComm application
+
+tags:
+  - name: Users
+    description: ユーザー関連の操作
+  - name: Events
+    description: イベント関連の操作
+  - name: Stamps
+    description: スタンプ関連の操作
+  - name: UserStamps
+    description: ユーザースタンプ関連の操作
+
+paths:
+  /users:
+    get:
+      summary: ユーザー一覧を取得
+      tags:
+        - Users
+      operationId: listUsers
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+              example:
+                - id: "123e4567-e89b-12d3-a456-426614174000"
+                  name: "Alice Smith"
+                  created_at: "2023-05-01T10:00:00Z"
+                  updated_at: "2023-05-01T10:00:00Z"
+                - id: "223e4567-e89b-12d3-a456-426614174001"
+                  name: "Bob Johnson"
+                  created_at: "2023-05-02T11:00:00Z"
+                  updated_at: "2023-05-02T11:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      summary: 新規ユーザーを作成
+      tags:
+        - Users
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+            example:
+              name: "Charlie Brown"
+      responses:
+        "201":
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+              example:
+                id: "323e4567-e89b-12d3-a456-426614174002"
+                name: "Charlie Brown"
+                created_at: "2023-05-03T12:00:00Z"
+                updated_at: "2023-05-03T12:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /users/{userId}:
+    get:
+      summary: 特定のユーザーを取得
+      tags:
+        - Users
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                name: "Alice Smith"
+                created_at: "2023-05-01T10:00:00Z"
+                updated_at: "2023-05-01T10:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    put:
+      summary: ユーザー情報を更新
+      tags:
+        - Users
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUser"
+            example:
+              name: "Alice Johnson"
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                name: "Alice Johnson"
+                created_at: "2023-05-01T10:00:00Z"
+                updated_at: "2023-05-04T14:30:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    delete:
+      summary: ユーザーを論理削除
+      tags:
+        - Users
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        "204":
+          description: 削除成功
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /events:
+    get:
+      summary: イベント一覧を取得
+      tags:
+        - Events
+      operationId: listEvents
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+              example:
+                - id: "423e4567-e89b-12d3-a456-426614174003"
+                  name: "Tokyo Stamp Rally"
+                  description_text: "Explore Tokyo's landmarks"
+                  description_image_url: "https://example.com/tokyo-rally.jpg"
+                  latitude: 35.6762
+                  longitude: 139.6503
+                  created_at: "2023-06-01T09:00:00Z"
+                  updated_at: "2023-06-01T09:00:00Z"
+                - id: "523e4567-e89b-12d3-a456-426614174004"
+                  name: "Kyoto Cultural Tour"
+                  description_text: "Discover Kyoto's rich history"
+                  description_image_url: "https://example.com/kyoto-tour.jpg"
+                  latitude: 35.0116
+                  longitude: 135.7681
+                  created_at: "2023-06-02T10:00:00Z"
+                  updated_at: "2023-06-02T10:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      summary: 新規イベントを作成
+      tags:
+        - Events
+      operationId: createEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewEvent"
+            example:
+              name: "Osaka Food Tour"
+              description_text: "Taste Osaka's famous street food"
+              description_image_url: "https://example.com/osaka-food.jpg"
+              latitude: 34.6937
+              longitude: 135.5023
+      responses:
+        "201":
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+              example:
+                id: "623e4567-e89b-12d3-a456-426614174005"
+                name: "Osaka Food Tour"
+                description_text: "Taste Osaka's famous street food"
+                description_image_url: "https://example.com/osaka-food.jpg"
+                latitude: 34.6937
+                longitude: 135.5023
+                created_at: "2023-06-03T11:00:00Z"
+                updated_at: "2023-06-03T11:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /stamps:
+    get:
+      summary: スタンプ一覧を取得
+      tags:
+        - Stamps
+      operationId: listStamps
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Stamp"
+              example:
+                - id: "723e4567-e89b-12d3-a456-426614174006"
+                  event_id: "423e4567-e89b-12d3-a456-426614174003"
+                  name: "Tokyo Tower Stamp"
+                  description_text: "Collected at Tokyo Tower"
+                  description_image_url: "https://example.com/tokyo-tower-stamp.jpg"
+                  latitude: 35.6586
+                  longitude: 139.7454
+                  created_at: "2023-07-01T08:00:00Z"
+                  updated_at: "2023-07-01T08:00:00Z"
+                - id: "823e4567-e89b-12d3-a456-426614174007"
+                  event_id: "523e4567-e89b-12d3-a456-426614174004"
+                  name: "Kinkaku-ji Stamp"
+                  description_text: "Collected at Golden Pavilion"
+                  description_image_url: "https://example.com/kinkakuji-stamp.jpg"
+                  latitude: 35.0394
+                  longitude: 135.7292
+                  created_at: "2023-07-02T09:00:00Z"
+                  updated_at: "2023-07-02T09:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      summary: 新規スタンプを作成
+      tags:
+        - Stamps
+      operationId: createStamp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewStamp"
+            example:
+              event_id: "623e4567-e89b-12d3-a456-426614174005"
+              name: "Osaka Castle Stamp"
+              description_text: "Collected at Osaka Castle"
+              description_image_url: "https://example.com/osaka-castle-stamp.jpg"
+              latitude: 34.6873
+              longitude: 135.5262
+      responses:
+        "201":
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stamp"
+              example:
+                id: "923e4567-e89b-12d3-a456-426614174008"
+                event_id: "623e4567-e89b-12d3-a456-426614174005"
+                name: "Osaka Castle Stamp"
+                description_text: "Collected at Osaka Castle"
+                description_image_url: "https://example.com/osaka-castle-stamp.jpg"
+                latitude: 34.6873
+                longitude: 135.5262
+                created_at: "2023-07-03T10:00:00Z"
+                updated_at: "2023-07-03T10:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /users/{userId}/stamps:
+    get:
+      summary: ユーザーのスタンプ一覧を取得
+      tags:
+        - UserStamps
+      operationId: listUserStamps
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserStamp"
+              example:
+                - id: "a23e4567-e89b-12d3-a456-426614174009"
+                  user_id: "123e4567-e89b-12d3-a456-426614174000"
+                  stamp_id: "723e4567-e89b-12d3-a456-426614174006"
+                  image_url: "https://example.com/user-tokyo-tower-stamp.jpg"
+                  created_at: "2023-08-01T15:00:00Z"
+                  updated_at: "2023-08-01T15:00:00Z"
+                - id: "b23e4567-e89b-12d3-a456-426614174010"
+                  user_id: "123e4567-e89b-12d3-a456-426614174000"
+                  stamp_id: "823e4567-e89b-12d3-a456-426614174007"
+                  image_url: "https://example.com/user-kinkakuji-stamp.jpg"
+                  created_at: "2023-08-02T16:00:00Z"
+                  updated_at: "2023-08-02T16:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      summary: ユーザーにスタンプを追加
+      tags:
+        - UserStamps
+      operationId: addUserStamp
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUserStamp"
+            example:
+              stamp_id: "923e4567-e89b-12d3-a456-426614174008"
+              image_url: "https://example.com/user-osaka-castle-stamp.jpg"
+      responses:
+        "201":
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserStamp"
+              example:
+                id: "c23e4567-e89b-12d3-a456-426614174011"
+                user_id: "123e4567-e89b-12d3-a456-426614174000"
+                stamp_id: "923e4567-e89b-12d3-a456-426614174008"
+                image_url: "https://example.com/user-osaka-castle-stamp.jpg"
+                created_at: "2023-08-03T17:00:00Z"
+                updated_at: "2023-08-03T17:00:00Z"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    NewUser:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    UpdateUser:
+      type: object
+      properties:
+        name:
+          type: string
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description_text:
+          type: string
+        description_image_url:
+          type: string
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+
+    NewEvent:
+      type: object
+      properties:
+        name:
+          type: string
+        description_text:
+          type: string
+        description_image_url:
+          type: string
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+      required:
+        - name
+        - latitude
+        - longitude
+
+    Stamp:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        event_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description_text:
+          type: string
+        description_image_url:
+          type: string
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    NewStamp:
+      type: object
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description_text:
+          type: string
+        description_image_url:
+          type: string
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+      required:
+        - event_id
+        - name
+        - latitude
+        - longitude
+
+    UserStamp:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        stamp_id:
+          type: string
+          format: uuid
+        image_url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    NewUserStamp:
+      type: object
+      properties:
+        stamp_id:
+          type: string
+          format: uuid
+        image_url:
+          type: string
+      required:
+        - stamp_id
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+      required:
+        - code
+        - message
+
+  responses:
+    ErrorResponse:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
